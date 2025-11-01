@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/accounts/', include('accounts.urls')),  # accounts 앱 분리
     path('api/posts/', include('posts.urls')),        # posts 앱 분리
+    path('api/', include('mypage.urls')), # mypage 추가
 ]
 
 if settings.DEBUG:
