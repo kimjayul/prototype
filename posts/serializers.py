@@ -7,7 +7,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        # ⭐️ fields 목록에 'image'가 포함되어 있는지 확인
-        fields = ['postId', 'title', 'content', 'author', 'created_at', 'audio_file', 'image']
-        read_only_fields = ['author', 'created_at']
+        fields = ['postId', 'title', 'content', 'author', 'created_at', 'audio_file', 'image', 
+                  'view_count', 'like_count']  # ⭐ 이 2개 추가!
+        read_only_fields = ['author', 'created_at', 'view_count', 'like_count']  # ⭐ 추가!
     
