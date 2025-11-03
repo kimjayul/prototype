@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'accounts',
     'corsheaders',
     'posts',
+    'mypage',  # ⭐ 이 줄 추가!
     'rest_framework_simplejwt.token_blacklist',
 ]
 
