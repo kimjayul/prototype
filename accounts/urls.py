@@ -23,4 +23,5 @@ urlpatterns = [
     path('me/', UserProfileView.as_view(), name='user-profile'),
     path('change-password/', change_password, name='change-password'),
     path('me/statistics/', user_statistics, name='user-statistics'),
+    path('<int:pk>/', UserProfileView.as_view(), name='user-detail'), #추가
 ]
