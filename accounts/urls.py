@@ -8,7 +8,7 @@ from .views import (
     LogoutView,
     UserProfileView,
     change_password,
-    user_statistics
+    user_statistics,
 )
 
 urlpatterns = [
