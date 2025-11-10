@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import PostSerializer
@@ -32,6 +32,12 @@ class PostListView(ListAPIView):
         context = super().get_serializer_context()
         context['request'] = self.request
         return context
+    
+class PostDetailView(RetrieveAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    lookup_field = 'id' # 👈 URL에서 ID를 찾는 필드 이름 (기본값 pk)
+    lookup_url_kwarg = 'post_id' # 👈 urls.py에서 사용할 변수 이름
 
 class PostUpdateView(APIView):
     permission_classes = [IsAuthenticated]
