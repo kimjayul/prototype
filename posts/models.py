@@ -8,6 +8,7 @@ class Post(models.Model):
     content = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)  # 🆕 추가!
     audio_file = models.FileField(upload_to='audio/', blank=True, null=True)
     image = models.ImageField(upload_to='images/', blank=True, null=True)
     view_count = models.IntegerField(default=0, verbose_name="조회수")
