@@ -25,7 +25,7 @@ urlpatterns = [
     path('api/accounts/', include('accounts.urls')),  # accounts 앱 분리
     path('api/posts/', include('posts.urls')),        # posts 앱 분리
     path('api/music/', include('mypage.urls')), # 추가
-    path('api/users/', include('accounts.urls')), # 추가22
+    path('api/users/', include('accounts.urls_mypage')), # 추가22 # 수정11
 ]
 
 if settings.DEBUG:
