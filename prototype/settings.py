@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'accounts',
     'corsheaders',
     'posts',
+    'mypage',
     'rest_framework_simplejwt.token_blacklist',
 ]
 
