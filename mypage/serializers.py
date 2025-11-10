@@ -15,13 +15,14 @@ class MusicSerializer(serializers.ModelSerializer):
     artist = serializers.CharField(allow_blank=True, required=False)  # ⭐ 추가!
     likes_count = serializers.IntegerField(read_only=True)
     is_liked = serializers.SerializerMethodField()
+    file_url = serializers.SerializerMethodField()  # 🆕 추가! (audio_file 별칭)
     
-    class Meta:
+   class Meta:
         model = Music
-        fields = ['id', 'title', 'description', 'author', 'artist',  # ⭐ artist 추가!
-                  'audio_file', 'cover_image', 'genre', 'duration', 
-                  'created_at', 'likes_count', 'is_liked']
-        read_only_fields = ['id', 'created_at', 'author']
+        fields = ['id', 'title', 'description', 'author', 'artist',
+                  'audio_file', 'file_url', 'cover_image', 'genre', 'duration',  # 🆕 file_url 추가!
+                  'created_at', 'updated_at', 'likes_count', 'is_liked']  # 🆕 updated_at 추가!
+        read_only_fields = ['id', 'created_at', 'updated_at', 'author']  # 🆕 updated_at 추가!
     
     def get_is_liked(self, obj):
         """현재 사용자가 좋아요 했는지 확인"""
