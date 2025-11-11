@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.parsers import MultiPartParser, FormParser  # ⭐ 추가!
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -76,7 +76,12 @@ class UserView(APIView):
 class UserProfileView(APIView):
     """사용자 프로필 조회 및 수정"""
     permission_classes = [IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser]  # ⭐ 추가!
+    
+    def get_parsers(self):
+        """GET은 JSONParser, PUT/PATCH는 MultiPartParser 사용"""
+        if self.request.method in ['PUT', 'PATCH']:
+            return [MultiPartParser(), FormParser(), JSONParser()]
+        return [JSONParser()]
     
     def get(self, request, pk=None):
         """프로필 조회"""
@@ -93,12 +98,21 @@ class UserProfileView(APIView):
             # 내 프로필 조회
             user = request.user
         
+        # Profile이 없으면 생성
+        if not hasattr(user, 'profile'):
+            Profile.objects.create(user=user)
+        
         serializer = UserProfileSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def put(self, request):
         """프로필 수정"""
         user = request.user
+        
+        # Profile이 없으면 생성
+        if not hasattr(user, 'profile'):
+            Profile.objects.create(user=user)
+        
         serializer = UserProfileSerializer(
             user,
             data=request.data,
@@ -139,6 +153,10 @@ def change_password(request):
 def user_statistics(request):
     """사용자 통계 조회"""
     user = request.user
+    
+    # Profile이 없으면 생성
+    if not hasattr(user, 'profile'):
+        Profile.objects.create(user=user)
     
     # 게시물 수
     total_posts = user.post_set.count()
