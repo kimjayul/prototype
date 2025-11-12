@@ -4,6 +4,7 @@ from .views import (
     PostListView, 
     PostDeleteView, 
     PostUpdateView,
+    PostDetailView,
     MyPostsListView,
     FavoritePostsListView,
     toggle_post_like,
@@ -20,4 +21,7 @@ urlpatterns = [
     path('my-posts/', MyPostsListView.as_view(), name='my-posts'),
     path('favorites/', FavoritePostsListView.as_view(), name='favorite-posts'),
     path('<int:post_id>/like/', toggle_post_like, name='toggle-post-like'),
+
+    # ❗️ 'posts/' 접두사 제거
+    path('<int:post_id>/', PostDetailView.as_view(), name='post-detail'), 
 ]
