@@ -24,21 +24,21 @@ class MusicSerializer(serializers.ModelSerializer):
                   'created_at', 'updated_at', 'likes_count', 'is_liked']
         read_only_fields = ['id', 'created_at', 'updated_at', 'author']
     
+    def get_file_url(self, obj):
+        """audio_file의 절대 URL 반환"""
+        if obj.audio_file:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.audio_file.url)
+            return obj.audio_file.url
+        return None
+    
     def get_is_liked(self, obj):
         """현재 사용자가 좋아요 했는지 확인"""
         request = self.context.get('request')
         if request and request.user.is_authenticated:
             return MusicLike.objects.filter(user=request.user, music=obj).exists()
         return False
-    
-    def get_file_url(self, obj):
-        """audio_file의 URL 반환"""
-        request = self.context.get('request')
-        if obj.audio_file and hasattr(obj.audio_file, 'url'):
-            if request:
-                return request.build_absolute_uri(obj.audio_file.url)
-            return obj.audio_file.url
-        return None
 
 
 class FavoriteMusicSerializer(serializers.ModelSerializer):
