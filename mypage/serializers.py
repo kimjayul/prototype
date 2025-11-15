@@ -33,8 +33,8 @@ class MusicSerializer(serializers.ModelSerializer):
     
     def get_file_url(self, obj):
         """audio_file의 URL 반환"""
-        request = self.context.get('request')
-        if obj.audio_file and hasattr(obj.audio_file, 'url'):
+       if obj.audio_file:
+            request = self.context.get('request')
             if request:
                 return request.build_absolute_uri(obj.audio_file.url)
             return obj.audio_file.url
