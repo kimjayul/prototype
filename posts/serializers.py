@@ -1,23 +1,20 @@
-# posts/serializers.py (FINAL_BACKEND + mypage 통합)
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Post, PostLike
 
 
-# ==================== 기존 PostSerializer (FINAL_BACKEND 유지!) ====================
+# ==================== 기존 PostSerializer (생성/수정용) ====================
 class PostSerializer(serializers.ModelSerializer):
     author = serializers.CharField(source='author.username', read_only=True)
     postId = serializers.IntegerField(source='id', read_only=True)
-    image = serializers.SerializerMethodField()  # ✅ FINAL_BACKEND 기능 유지
-    audio_file = serializers.SerializerMethodField()  # ✅ FINAL_BACKEND 기능 유지
+    image = serializers.SerializerMethodField()
+    audio_file = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ['postId', 'title', 'content', 'author', 'created_at', 'audio_file', 'image',
-                  'view_count', 'like_count']  # ✅ mypage에서 view_count, like_count 추가
-        read_only_fields = ['author', 'created_at', 'view_count', 'like_count']
+        fields = ['postId', 'title', 'content', 'author', 'created_at', 'audio_file', 'image']
+        read_only_fields = ['author', 'created_at']
     
-    # ✅ FINAL_BACKEND 기능 유지
     def get_image(self, obj):
         if obj.image:
             request = self.context.get('request')
@@ -26,7 +23,6 @@ class PostSerializer(serializers.ModelSerializer):
             return obj.image.url
         return None
     
-    # ✅ FINAL_BACKEND 기능 유지
     def get_audio_file(self, obj):
         if obj.audio_file:
             request = self.context.get('request')
@@ -35,7 +31,6 @@ class PostSerializer(serializers.ModelSerializer):
             return obj.audio_file.url
         return None
     
-    # ✅ FINAL_BACKEND 기능 유지
     def create(self, validated_data):       
         request = self.context.get('request')
         
@@ -49,7 +44,6 @@ class PostSerializer(serializers.ModelSerializer):
         )
         return post
     
-    # ✅ FINAL_BACKEND 기능 유지
     def update(self, instance, validated_data):
         instance.title = validated_data.get('title', instance.title)
         instance.content = validated_data.get('content', instance.content)
@@ -72,7 +66,7 @@ class PostAuthorSerializer(serializers.ModelSerializer):
 
 
 class PostDetailSerializer(serializers.ModelSerializer):
-    """게시물 상세 시리얼라이저 (MyPage용)"""
+    """게시물 상세 시리얼라이저 (MyPage용 - 조회 전용)"""
     author = PostAuthorSerializer(read_only=True)
     likes_count = serializers.IntegerField(read_only=True)
     is_liked = serializers.SerializerMethodField()
