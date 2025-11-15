@@ -32,23 +32,17 @@ class PostSerializer(serializers.ModelSerializer):
         return None
     
     def create(self, validated_data):       
-    request = self.context.get('request')
-    
-    # validated_data에서 image와 audio_file 제거 (중복 방지)
-    validated_data.pop('image', None)
-    validated_data.pop('audio_file', None)
-    
-    # FILES에서 파일 가져오기
-    image_file = request.FILES.get('image', None)
-    audio_file = request.FILES.get('audio_file', None)
-   
-    # Post 객체 생성
-    post = Post.objects.create(
-        **validated_data,
-        image=image_file,
-        audio_file=audio_file
-    )
-    return post
+        request = self.context.get('request')
+        
+        image_file = request.FILES.get('image', None)
+        audio_file = request.FILES.get('audio_file', None)
+       
+        post = Post.objects.create(
+            **validated_data,
+            image=image_file,
+            audio_file=audio_file
+        )
+        return post
     
     def update(self, instance, validated_data):
         instance.title = validated_data.get('title', instance.title)
