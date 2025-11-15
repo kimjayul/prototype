@@ -3,18 +3,20 @@ from django.contrib.auth.models import User
 from .models import Post, PostLike
 
 
-# ==================== 기존 PostSerializer (생성/수정용) ====================
+# ==================== 기존 PostSerializer (FINAL_BACKEND 유지!) ====================
 class PostSerializer(serializers.ModelSerializer):
     author = serializers.CharField(source='author.username', read_only=True)
     postId = serializers.IntegerField(source='id', read_only=True)
-    image = serializers.SerializerMethodField()
-    audio_file = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()  # ✅ FINAL_BACKEND 기능 유지
+    audio_file = serializers.SerializerMethodField()  # ✅ FINAL_BACKEND 기능 유지
 
     class Meta:
         model = Post
-        fields = ['postId', 'title', 'content', 'author', 'created_at', 'audio_file', 'image']
-        read_only_fields = ['author', 'created_at']
+        fields = ['postId', 'title', 'content', 'author', 'created_at', 'audio_file', 'image',
+                  'view_count', 'like_count']  # ✅ mypage에서 view_count, like_count 추가
+        read_only_fields = ['author', 'created_at', 'view_count', 'like_count']
     
+    # ✅ FINAL_BACKEND 기능 유지
     def get_image(self, obj):
         if obj.image:
             request = self.context.get('request')
@@ -23,6 +25,7 @@ class PostSerializer(serializers.ModelSerializer):
             return obj.image.url
         return None
     
+    # ✅ FINAL_BACKEND 기능 유지
     def get_audio_file(self, obj):
         if obj.audio_file:
             request = self.context.get('request')
@@ -31,12 +34,19 @@ class PostSerializer(serializers.ModelSerializer):
             return obj.audio_file.url
         return None
     
-    def create(self, validated_data):       
+    # ✅ 수정된 create 메서드
+    def create(self, validated_data):
         request = self.context.get('request')
         
+        # validated_data에서 image와 audio_file 제거 (중복 방지)
+        validated_data.pop('image', None)
+        validated_data.pop('audio_file', None)
+        
+        # FILES에서 파일 가져오기
         image_file = request.FILES.get('image', None)
         audio_file = request.FILES.get('audio_file', None)
-       
+        
+        # Post 객체 생성
         post = Post.objects.create(
             **validated_data,
             image=image_file,
@@ -44,6 +54,7 @@ class PostSerializer(serializers.ModelSerializer):
         )
         return post
     
+    # ✅ FINAL_BACKEND 기능 유지
     def update(self, instance, validated_data):
         instance.title = validated_data.get('title', instance.title)
         instance.content = validated_data.get('content', instance.content)
@@ -66,7 +77,7 @@ class PostAuthorSerializer(serializers.ModelSerializer):
 
 
 class PostDetailSerializer(serializers.ModelSerializer):
-    """게시물 상세 시리얼라이저 (MyPage용 - 조회 전용)"""
+    """게시물 상세 시리얼라이저 (MyPage용)"""
     author = PostAuthorSerializer(read_only=True)
     likes_count = serializers.IntegerField(read_only=True)
     is_liked = serializers.SerializerMethodField()
