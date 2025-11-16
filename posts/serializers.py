@@ -79,6 +79,7 @@ class PostAuthorSerializer(serializers.ModelSerializer):
 class PostDetailSerializer(serializers.ModelSerializer):
     """게시물 상세 시리얼라이저 (MyPage용)"""
     author = PostAuthorSerializer(read_only=True)
+    postId = serializers.IntegerField(source='id', read_only=True)  # ✅ 추가!
     likes_count = serializers.IntegerField(read_only=True)
     is_liked = serializers.SerializerMethodField()
     # ✅ 추가: SerializerMethodField로 변경
